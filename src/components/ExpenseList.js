@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
 
+// ExpenseList.js
+import React, { useState, useEffect } from 'react';
+import './ExpenseList.css';
 import ExpenseModal from './ExpenseModal';
-import './ExpenseList.css'
 
 function ExpenseList({ salary, expenses, onUpdateExpense, onDeleteExpense }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState(null);
   const [totalBalance, setTotalBalance] = useState(salary);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [expenseToUpdate, setExpenseToUpdate] = useState(null);
 
   useEffect(() => {
     // Recalculate total balance whenever expenses change
@@ -14,29 +15,31 @@ function ExpenseList({ salary, expenses, onUpdateExpense, onDeleteExpense }) {
     setTotalBalance(salary - totalExpenses);
   }, [salary, expenses]);
 
-  const handleOpenModal = (expense) => {
-    setSelectedExpense(expense);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   const handleUpdateExpense = (expense) => {
-    handleOpenModal(expense);
+    setExpenseToUpdate(expense);
+    setModalOpen(true);
+  };
+
+  const handleUpdateExpenseModal = (updatedExpense) => {
+    onUpdateExpense(updatedExpense);
+    setModalOpen(false);
   };
 
   const handleDeleteExpense = (expenseId) => {
     onDeleteExpense(expenseId);
   };
 
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
   return (
     <div>
-      <h1 class="heading" style={{ textAlign: 'center' }}>Expenses</h1>
-
+      <h1 className="heading" style={{ textAlign: 'center' }}>
+        Expenses {expenses[0]?.month || ':'}
+      </h1>
       <table style={{ margin: '0 auto', borderCollapse: 'collapse', width: '80%' }}>
-        <thead>
+      <thead>
           <tr>
             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Serial Number</th>
             <th style={{ border: '1px solid #ddd', padding: '8px' }}>Title</th>
@@ -50,24 +53,30 @@ function ExpenseList({ salary, expenses, onUpdateExpense, onDeleteExpense }) {
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>{expense.title}</td>
               <td style={{ border: '1px solid #ddd', padding: '8px' }}>${expense.amount}</td>
-              <td style={{ border: '1px solid #ddd', padding: '8px' }} className='buttons'>
-                <button onClick={() => handleUpdateExpense(expense)} class="update">Update</button> 
-                <button onClick={() => handleDeleteExpense(expense.id)} class="delete" >Delete</button>
+              <td style={{ border: '1px solid #ddd', padding: '8px' }} className="buttons">
+                <button onClick={() => handleUpdateExpense(expense)} className="update">
+                  Update
+                </button>
+                <button onClick={() => handleDeleteExpense(expense.id)} className="delete">
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {isModalOpen && (
-        <ExpenseModal className="balance"
-          expense={selectedExpense}
+      <div>
+        <p className="total" style={{ textAlign: 'center', fontWeight: 'bold', display: 'flex' }}>
+          Total Balance: ${totalBalance}
+        </p>
+      </div>
+      {modalOpen && (
+        <ExpenseModal
+          expense={expenseToUpdate}
           onCloseModal={handleCloseModal}
-          onUpdateExpense={onUpdateExpense}
+          onUpdateExpense={handleUpdateExpenseModal}
         />
       )}
-      <div>
-        <p class="total" style={{ textAlign: 'center', fontWeight: 'bold', display: 'flex' }}>Total Balance: ${totalBalance}</p>
-      </div>
     </div>
   );
 }
