@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseList from './components/ExpenseList';
@@ -37,7 +38,8 @@ function App() {
   }, []);
 
   const addExpense = (expense) => {
-    setExpenses([...expenses, expense]);
+    const newExpense = { ...expense, month };
+    setExpenses([...expenses, newExpense]);
   };
 
   const updateExpense = (updatedExpense) => {
@@ -109,7 +111,7 @@ function App() {
 
   return (
     <div className='App'>
-      <h1 className='main-heading'>Expense Tracker</h1>
+      <h1 className='main-heading' style={{ textAlign: 'center',color:'orangered' }}>Expense Tracker</h1>
       <div className="container">
         <div className="left-column">
           <div className="input-wrapper">
@@ -140,13 +142,14 @@ function App() {
         </div>
         <div className="right-column">
           <ExpenseList
+            month={month}
             salary={salary}
             expenses={expenses}
             onUpdateExpense={updateExpense}
             onDeleteExpense={deleteExpense}
           />
           <div className='month-wise-savings'>
-            <h2>Monthly Savings</h2>
+            <h2 style={{ textAlign: 'center' }}>Monthly Savings</h2>
             <table>
               <thead>
                 <tr>
@@ -170,7 +173,7 @@ function App() {
               <p></p>
             </div>
 
-            <button onClick={handleRefresh}>Save</button>
+            <button onClick={handleRefresh} className="save-btn">Save</button>
           </div>
         </div>
       </div>
